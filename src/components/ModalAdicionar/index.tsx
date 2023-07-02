@@ -67,20 +67,31 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
 
     useEffect(() => {
         if(itemSelecionado === undefined){
-            null
+            setNome('')
+            setTelefone('')
         } else {
             setNome(itemSelecionado.nome)
             setTelefone(itemSelecionado.telefone)
         }
     },[itemSelecionado])
-
+    
+    // console.log(itemSelecionado)
+    
     const listaDeContato = useRecoilValue(contato)
     const setListaContato = useSetRecoilState(contato)
 
-    function enviarContato(){
+    function verificaCriarOuAtualizar(){
         // const nomeJaExistente = listaDeContato.some(ItemDaLista => ItemDaLista.nome.toUpperCase() === nome.toUpperCase())
         const numeroJaExistente = listaDeContato.some(ItemDaLista => ItemDaLista.telefone === telefone)
 
+        if(itemSelecionado === undefined){
+            criarContato(numeroJaExistente)
+        } else {
+            atualizarContato(numeroJaExistente)
+        }
+    }
+
+    function criarContato(numeroJaExistente: boolean){
         if(numeroJaExistente){
             alert('Numero já existente, por favor adicione outro numero')
             setTelefone('')
@@ -98,17 +109,33 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
                     setNome('')
                     setTelefone('')
                 }
-            } else {
-                console.log('aquilo')
-                // const novoItem = itemSelecionado
-                // novoItem.nome = nome
-                // novoItem.telefone = telefone
-                // console.log(novoItem)
-                // setItemSelecionado({
-                //     itemSelecionado.nome = nome,
-                // })
             }
         }
+    }
+    
+    function atualizarContato(numeroJaExistente: boolean){
+        if(numeroJaExistente){
+            alert('Numero já existente, por favor adicionar outro numero.')
+            setTelefone('')
+        } else {
+            const itemAtualizado = {
+                ...itemSelecionado
+            }
+    
+            itemAtualizado.nome = nome
+            itemAtualizado.telefone = telefone
+
+            console.log(itemAtualizado)
+            // const indiceItem = listaDeContato.findIndex(evt => evt.nome === itemSelecionado?.nome)
+            // const itemAtualizadoFinalizado = [...listaDeContato.slice(0, indiceItem), itemAtualizado, ...listaDeContato.slice(indiceItem + 1)]
+            // setListaContato(itemAtualizado)
+            
+            // setListaContato(listaAntiga => {
+            //     const itemAtual = listaAntiga.findIndex(evt => evt.nome === itemSelecionado?.nome)
+            //     return [...listaAntiga.slice(0, itemAtual), itemAtualizado, ...listaAntiga.slice(itemAtual + 1)]
+            // })
+        }
+
     }
     
     function cancelarContato(){
@@ -133,7 +160,7 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
                 </div>
                 <div className='botoes'>
                     <button onClick={cancelarContato}>CANCELAR</button>
-                    <button onClick={enviarContato}>SALVAR</button>
+                    <button onClick={verificaCriarOuAtualizar}>SALVAR</button>
                 </div>
             </ModalContainer>
         </FundoModal>

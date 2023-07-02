@@ -122,8 +122,8 @@ export default function Home() {
   }
   
   const abrirModalAtualizar = (contato: IContato) => {
-    // setModalOpen(true)
-    // setItemSelecionado(contato)
+    setModalOpen(true)
+    setItemSelecionado(contato)
   }
 
   return (

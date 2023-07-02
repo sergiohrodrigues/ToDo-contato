@@ -63,6 +63,12 @@ const ModalExcluir = ({modalDeleteOpen, setModalDeleteOpen, itemSelecionado, set
         const novaLista = listaDeContatos.filter(itemDaLista => itemDaLista !== itemSelecionado)
         setListaContato(novaLista)
         setModalDeleteOpen(false)
+        setItemSelecionado(undefined)
+    }
+
+    function cancelarExcluir(){
+        setModalDeleteOpen(false)
+        setItemSelecionado(undefined)
     }
 
     return(
@@ -74,7 +80,7 @@ const ModalExcluir = ({modalDeleteOpen, setModalDeleteOpen, itemSelecionado, set
                     <span>Telefone: {itemSelecionado?.telefone}</span>
                 </div>
                 <div className='botoes'>
-                    <button onClick={() => setModalDeleteOpen(false)}>CANCELAR</button>
+                    <button onClick={cancelarExcluir}>CANCELAR</button>
                     <button onClick={excluirContato}>CONFIRMAR</button>
                 </div>
             </ModalContainer>
