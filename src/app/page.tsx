@@ -1,9 +1,9 @@
 'use client'
-import Modal from "@/components/ModalAdicionar"
+import Modal from "@/components/ModalAdicionarEAtualizar"
 import { useState } from "react"
 import { styled } from "styled-components"
 import { contato } from "@/states/atom"
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 import Image from "next/image"
 import ImagemContato from '../assets/contato.png'
 import { BiEdit } from 'react-icons/bi'
@@ -112,7 +112,8 @@ const ListaDeContatos = styled.ul`
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false)
-  const [itemSelecionado, setItemSelecionado] = useState<IContato>()
+  const [itemSelecionado, setItemSelecionado] = useState<IContato | undefined>()
+  const [pesquisa, setPesquisa] = useState('')
 
   const listaDeContato = useRecoilValue(contato)
 
@@ -124,6 +125,7 @@ export default function Home() {
   const abrirModalAtualizar = (contato: IContato) => {
     setModalOpen(true)
     setItemSelecionado(contato)
+    console.log(contato)
   }
 
   return (
@@ -136,11 +138,21 @@ export default function Home() {
         <h2>Meus contatos</h2>
         <CriarEPesquisarContainer>
           <div>
-            <select>
-              <option value="">Nome</option>
-              <option value="">Telefone</option>
+            <select value={pesquisa} onChange={evento => setPesquisa(evento.target.value)}>
+              <option>Selecione uma opção</option>
+              <option>Nome</option>
+              <option value="Telefone">Telefone</option>
             </select>
-            <input type="search" placeholder="Pesquisar"/>  
+            <input type="search" placeholder="Pesquisar" onChange={(evento) => {
+              // const itemPesquisado = listaDeContato.filter(itemDaLista => itemDaLista.nome.includes(evento.target.value))
+
+              // console.log(itemPesquisa)
+              // if(itemPesquisa.length === 0){
+              //   setListaDeContato(listaDeContato)
+              // } else {
+              //   setListaDeContato(itemPesquisa)
+              // }
+            }}/>  
           </div>
           <button onClick={() => setModalOpen(true)}>+ Novo contato</button>
         </CriarEPesquisarContainer>
@@ -148,7 +160,7 @@ export default function Home() {
         {listaDeContato.map((contato, index) => (
           <li key={index}>
             <div className="infos">
-              <span className="letra">{contato.nome.substr(0,1)}</span>
+              {/* <span className="letra">{contato.nome.substr(0,1)}</span> */}
               <Image src={ImagemContato} alt={contato.nome} />
               <div>
                 <h2>{contato.nome}</h2>

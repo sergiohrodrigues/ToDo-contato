@@ -77,64 +77,56 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
     
     // console.log(itemSelecionado)
     
-    const listaDeContato = useRecoilValue(contato)
-    const setListaContato = useSetRecoilState(contato)
+    const listaDeContato = useRecoilValue<IContato[]>(contato)
+    const setListaContato = useSetRecoilState<IContato[]>(contato)
 
     function verificaCriarOuAtualizar(){
-        // const nomeJaExistente = listaDeContato.some(ItemDaLista => ItemDaLista.nome.toUpperCase() === nome.toUpperCase())
-        const numeroJaExistente = listaDeContato.some(ItemDaLista => ItemDaLista.telefone === telefone)
+        // const nomeJaExistente = listaDeContato.some(itemDaLista => itemDaLista.nome.toUpperCase() === nome.toUpperCase())
+        // const numeroJaExistente = listaDeContato.some(ItemDaLista => ItemDaLista.telefone === telefone)
 
         if(itemSelecionado === undefined){
-            criarContato(numeroJaExistente)
+            criarContato()
         } else {
-            atualizarContato(numeroJaExistente)
+            atualizarContato()
         }
     }
 
-    function criarContato(numeroJaExistente: boolean){
-        if(numeroJaExistente){
-            alert('Numero já existente, por favor adicione outro numero')
-            setTelefone('')
+    function criarContato(){
+        if(nome === '' || telefone === ''){
+            alert('Por favor preencha todos os campos')
         } else {
-            if(itemSelecionado === undefined){
-                if(nome === '' && telefone === ''){
-                    alert('Por favor preencha todos os campos')
-                } else {
-                    const novoContato = {
-                        nome: nome,
-                        telefone: mascaraTelefone(telefone)
-                    }
-                    setListaContato(contatoAntigo => [...contatoAntigo, novoContato])
-                    setModalOpen(false)
-                    setNome('')
-                    setTelefone('')
-                }
+            const novoContato = {
+                nome: nome,
+                telefone: mascaraTelefone(telefone)
             }
+            setListaContato(contatoAntigo => [...contatoAntigo, novoContato])
+            setModalOpen(false)
+            setNome('')
+            setTelefone('')
         }
     }
     
-    function atualizarContato(numeroJaExistente: boolean){
-        if(numeroJaExistente){
-            alert('Numero já existente, por favor adicionar outro numero.')
-            setTelefone('')
+    function atualizarContato(){
+        const itemAtualizado = {
+            ...itemSelecionado
+        }
+        
+        if(nome === '' || telefone === ''){
+            alert('Por favor preencha todos os campos')
         } else {
-            const itemAtualizado = {
-                ...itemSelecionado
-            }
-    
             itemAtualizado.nome = nome
             itemAtualizado.telefone = telefone
 
-            console.log(itemAtualizado)
-            // const indiceItem = listaDeContato.findIndex(evt => evt.nome === itemSelecionado?.nome)
-            // const itemAtualizadoFinalizado = [...listaDeContato.slice(0, indiceItem), itemAtualizado, ...listaDeContato.slice(indiceItem + 1)]
-            // setListaContato(itemAtualizado)
-            
-            // setListaContato(listaAntiga => {
-            //     const itemAtual = listaAntiga.findIndex(evt => evt.nome === itemSelecionado?.nome)
-            //     return [...listaAntiga.slice(0, itemAtual), itemAtualizado, ...listaAntiga.slice(itemAtual + 1)]
-            // })
+            setListaContato(listaAntiga => {
+                const itemAtual = listaAntiga.findIndex(evt => evt.nome === itemSelecionado?.nome)
+                return [...listaAntiga.slice(0, itemAtual), itemAtualizado, ...listaAntiga.slice(itemAtual + 1)]
+            })
+
+            setModalOpen(false)
+            setItemSelecionado(undefined)
+            console.log(listaDeContato)
         }
+            
 
     }
     
