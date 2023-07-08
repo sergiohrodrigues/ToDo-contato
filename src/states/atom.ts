@@ -24,5 +24,5 @@ export const contato = atom<IContato[]>({
             nome: 'Helo',
             telefone: '(43)99834-3648'
         },
-]
+    ]
 })

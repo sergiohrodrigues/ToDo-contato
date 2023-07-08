@@ -2,7 +2,7 @@ import { contato } from '@/states/atom'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { styled } from 'styled-components'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { mascaraTelefone } from '@/utilidades/mascara-telefone'
+import { mascaraTelefone } from '@/utilidades/mascaraTelefone'
 import InputMask from "react-input-mask";
 import { IContato } from '@/interface/IContato'
 import { useEffect } from 'react'
@@ -126,7 +126,6 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
             setItemSelecionado(undefined)
             console.log(listaDeContato)
         }
-            
 
     }
     

@@ -1,15 +1,14 @@
 'use client'
 import Modal from "@/components/ModalAdicionarEAtualizar"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { styled } from "styled-components"
 import { contato } from "@/states/atom"
 import { useRecoilValue, useSetRecoilState } from 'recoil'
-import Image from "next/image"
-import ImagemContato from '../assets/contato.png'
-import { BiEdit } from 'react-icons/bi'
-import { RiCloseCircleLine } from 'react-icons/ri'
 import ModalExcluir from "@/components/ModalExcluir"
 import { IContato } from "@/interface/IContato"
+import { PrimeiraLetraDoNome } from "@/utilidades/PrimeiraLetraDoNome"
+import Contato from "@/components/Contato"
+import { Icon } from "next/dist/lib/metadata/types/metadata-types"
 
 const MainContainer = styled.main<{display: string}>`
   padding: 3rem 0 0 3rem;
@@ -70,43 +69,6 @@ const ListaDeContatos = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  li{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid lightgray;
-    .infos{
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      .letra{
-        text-transform: uppercase;
-        background-color: red;
-        padding: 0.4rem;
-        border-radius: 0.5rem;
-        color: #fff;
-      }
-      div{
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-        h2{
-          font-size: 1.5rem;
-        }
-      }
-    }
-    .botoes{
-      display: flex;
-      gap: 1rem;
-      svg{
-        font-size: 1.5rem;
-      }
-      svg:hover{
-        cursor: pointer;
-      }
-    }
-  }
 `
 
 export default function Home() {
@@ -115,18 +77,21 @@ export default function Home() {
   const [itemSelecionado, setItemSelecionado] = useState<IContato | undefined>()
   const [pesquisa, setPesquisa] = useState('')
 
-  const listaDeContato = useRecoilValue(contato)
+  const listaDeContato = useRecoilValue<IContato[]>(contato)
 
-  const abrirModalDelete = (contato: IContato) => {
-    setModalDeleteOpen(true)
-    setItemSelecionado(contato)
-  }
-  
-  const abrirModalAtualizar = (contato: IContato) => {
-    setModalOpen(true)
-    setItemSelecionado(contato)
-    console.log(contato)
-  }
+  const listaDeContatos = JSON.parse(JSON.stringify(listaDeContato))
+  const [contatosOrdenados, setContatosOrdenados] = useState<IContato[]>([])
+
+  useEffect(() => {
+    ordenarPorNome()
+  }, [])
+
+  const ordenarPorNome = () => {
+    const Allcontatos = listaDeContatos.sort((a: IContato, b: IContato) =>
+      a.nome.localeCompare(b.nome)
+    );
+    setContatosOrdenados([...Allcontatos]);
+  };
 
   return (
     <>
@@ -157,21 +122,8 @@ export default function Home() {
           <button onClick={() => setModalOpen(true)}>+ Novo contato</button>
         </CriarEPesquisarContainer>
       <ListaDeContatos>
-        {listaDeContato.map((contato, index) => (
-          <li key={index}>
-            <div className="infos">
-              {/* <span className="letra">{contato.nome.substr(0,1)}</span> */}
-              <Image src={ImagemContato} alt={contato.nome} />
-              <div>
-                <h2>{contato.nome}</h2>
-                <span>{contato.telefone}</span>
-              </div>
-            </div>
-            <div className="botoes">
-              <BiEdit onClick={() => abrirModalAtualizar(contato)}/>
-              <RiCloseCircleLine onClick={() => abrirModalDelete(contato)}/>
-            </div>
-          </li>
+        {contatosOrdenados.map((contato, index) => (
+          <Contato key={index} contato={{...contato}} setModalDeleteOpen={setModalDeleteOpen} setItemSelecionado={setItemSelecionado} setModalOpen={setModalOpen}/>
         ))}
       </ListaDeContatos>
       </MainContainer>
