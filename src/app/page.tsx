@@ -104,7 +104,7 @@ export default function Home() {
         <CriarEPesquisarContainer>
           <div>
             <select value={pesquisa} onChange={evento => setPesquisa(evento.target.value)}>
-              <option>Selecione uma opção</option>
+              <option>Selecione uma opção:</option>
               <option>Nome</option>
               <option value="Telefone">Telefone</option>
             </select>
