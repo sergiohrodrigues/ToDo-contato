@@ -3,9 +3,8 @@ import Image from "next/image"
 import ImagemContato from '../../assets/contato.png'
 import { BiEdit } from 'react-icons/bi'
 import { RiCloseCircleLine } from 'react-icons/ri'
-import { Dispatch, SetStateAction, useState, useEffect, memo } from 'react'
+import { Dispatch, SetStateAction, memo } from 'react'
 import { styled } from "styled-components";
-import { PrimeiraLetraDoNome } from "../../utilidades/PrimeiraLetraDoNome";
 
 const ContatoContainer = styled.li<{colorletra: string}>`
     display: flex;
@@ -18,7 +17,6 @@ const ContatoContainer = styled.li<{colorletra: string}>`
       align-items: center;
       gap: 2rem;
       .letra{
-        text-transform: uppercase;
         background-color: ${props => props.colorletra};
         padding: 0.4rem;
         border-radius: 0.5rem;
@@ -47,54 +45,37 @@ const ContatoContainer = styled.li<{colorletra: string}>`
 
 interface Props {
     key: number,
-    contato: IContato,
+    contatos: IContato,
     setModalOpen: Dispatch<SetStateAction<boolean>>,
     setModalDeleteOpen: Dispatch<SetStateAction<boolean>>,
     setItemSelecionado: Dispatch<SetStateAction<IContato | undefined>>
 }
 
-function Contato({contato, setModalDeleteOpen, setItemSelecionado, setModalOpen}: Props){
+function Contato({contatos, setModalDeleteOpen, setItemSelecionado, setModalOpen}: Props){
 
-    const abrirModalDelete = (contato: IContato) => {
+    const abrirModalDelete = (contatos: IContato) => {
         setModalDeleteOpen(true)
-        setItemSelecionado(contato)
+        setItemSelecionado(contatos)
       }
       
-      const abrirModalAtualizar = (contato: IContato) => {
+      const abrirModalAtualizar = (contatos: IContato) => {
         setModalOpen(true)
-        setItemSelecionado(contato)
-        console.log(contato)
+        setItemSelecionado(contatos)
       }
-
-      const [letra, setLetra] = useState('')
-
-      function adicionarLetra(){
-        const primeiraLetroDoNome = contato.nome.substr(0,1)
-        setLetra(primeiraLetroDoNome)
-      }
-
-      useEffect(() => {
-        adicionarLetra()
-      }, [])
-
-      // const letras: string[] = letra
-      // const letrasSemRepeticao: string[] = Array.from(new Set(letras));
-
-      // console.log(letras);
 
     return(
-        <ContatoContainer colorletra={PrimeiraLetraDoNome()}>
+        <ContatoContainer colorletra={contatos.cor}>
             <div className="infos">
-            <span className="letra">{letra}</span>
-            <Image src={ImagemContato} alt={contato.nome} />
+            {contatos.primeiraLetra === '' ? <span style={{width:'25px'}}></span>  : <span className='letra'>{contatos.primeiraLetra?.toUpperCase()}</span> }
+            <Image src={ImagemContato} alt={contatos.nome} />
             <div>
-                <h2>{contato.nome}</h2>
-                <span>{contato.telefone}</span>
+              <h2>{contatos.nome}</h2>
+              <span>{contatos.telefone}</span>
             </div>
             </div>
             <div className="botoes">
-            <BiEdit onClick={() => abrirModalAtualizar(contato)}/>
-            <RiCloseCircleLine onClick={() => abrirModalDelete(contato)}/>
+            <BiEdit onClick={() => abrirModalAtualizar(contatos)}/>
+            <RiCloseCircleLine onClick={() => abrirModalDelete(contatos)}/>
             </div>
         </ContatoContainer>
     )

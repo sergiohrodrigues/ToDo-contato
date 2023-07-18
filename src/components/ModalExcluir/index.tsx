@@ -1,5 +1,5 @@
 import { contato } from '@/states/atom'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { styled } from 'styled-components'
 import { useSetRecoilState, useRecoilValue } from 'recoil'
 import { IContato } from '@/interface/IContato'
@@ -51,19 +51,21 @@ interface Props {
     modalDeleteOpen: boolean,
     setModalDeleteOpen: Dispatch<SetStateAction<boolean>>,
     itemSelecionado: IContato | undefined,
-    setItemSelecionado: Dispatch<SetStateAction<IContato | undefined>>
+    setItemSelecionado: Dispatch<SetStateAction<IContato | undefined>>,
+    adicionarMaisItensALista: () => void
 }
 
-const ModalExcluir = ({modalDeleteOpen, setModalDeleteOpen, itemSelecionado, setItemSelecionado}: Props) => {
+const ModalExcluir = ({modalDeleteOpen, setModalDeleteOpen, itemSelecionado, setItemSelecionado, adicionarMaisItensALista}: Props) => {
 
     const setListaContato = useSetRecoilState(contato)
     const listaDeContatos = useRecoilValue(contato)
 
     function excluirContato(){
-        const novaLista = listaDeContatos.filter(itemDaLista => itemDaLista !== itemSelecionado)
+        const novaLista = listaDeContatos.filter(itemDaLista => itemDaLista.nome !== itemSelecionado?.nome)
         setListaContato(novaLista)
         setModalDeleteOpen(false)
         setItemSelecionado(undefined)
+        adicionarMaisItensALista()
     }
 
     function cancelarExcluir(){

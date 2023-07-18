@@ -1,4 +1,4 @@
-import { contato } from '@/states/atom'
+import { contato, primeirasLetras } from '@/states/atom'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { styled } from 'styled-components'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
@@ -6,6 +6,7 @@ import { mascaraTelefone } from '@/utilidades/mascaraTelefone'
 import InputMask from "react-input-mask";
 import { IContato } from '@/interface/IContato'
 import { useEffect } from 'react'
+import { PrimeiraLetraDoNome } from '@/utilidades/PrimeiraLetraDoNome'
 
 const FundoModal = styled.section<{display: string}>`
     position: fixed;
@@ -64,6 +65,7 @@ interface Props {
 const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, setItemSelecionado}: Props) => {
     const [nome, setNome] = useState('')
     const [telefone, setTelefone] = useState('')
+    const [letra, setLetra] = useState('')
 
     useEffect(() => {
         if(itemSelecionado === undefined){
@@ -74,11 +76,9 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
             setTelefone(itemSelecionado.telefone)
         }
     },[itemSelecionado])
-    
-    // console.log(itemSelecionado)
-    
-    const listaDeContato = useRecoilValue<IContato[]>(contato)
+
     const setListaContato = useSetRecoilState<IContato[]>(contato)
+    const setPrimeirasLetras = useSetRecoilState<String[]>(primeirasLetras)
 
     function verificaCriarOuAtualizar(){
         // const nomeJaExistente = listaDeContato.some(itemDaLista => itemDaLista.nome.toUpperCase() === nome.toUpperCase())
@@ -91,21 +91,28 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
         }
     }
 
+    const listaPrimeirasLetras = useRecoilValue(primeirasLetras)
+
     function criarContato(){
-        if(nome === '' || telefone === ''){
-            alert('Por favor preencha todos os campos')
+        if(nome === '' && telefone.length < 10){
+            alert('Por favor preencha os campos corretamente')
         } else {
+            const letraJaAdicionada = listaPrimeirasLetras.some(letraLista => letraLista.toUpperCase() === letra.toUpperCase())
             const novoContato = {
                 nome: nome,
-                telefone: mascaraTelefone(telefone)
+                telefone: mascaraTelefone(telefone),
+                primeiraLetra: letraJaAdicionada ? '' : letra,
+                cor: PrimeiraLetraDoNome()
             }
             setListaContato(contatoAntigo => [...contatoAntigo, novoContato])
             setModalOpen(false)
             setNome('')
             setTelefone('')
+            setPrimeirasLetras(letraAntiga => [...letraAntiga, letra])
         }
+        setLetra('')
     }
-    
+
     function atualizarContato(){
         const itemAtualizado = {
             ...itemSelecionado
@@ -124,9 +131,7 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
 
             setModalOpen(false)
             setItemSelecionado(undefined)
-            console.log(listaDeContato)
         }
-
     }
     
     function cancelarContato(){
@@ -141,7 +146,10 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
             <ModalContainer>
                 {itemSelecionado === undefined ? <h2>Adicionar contato</h2> : <h2>Atualizar contato</h2>}
                 <div>
-                    <input type="text" placeholder="Nome*" value={nome} onChange={e => setNome(e.target.value)}/>
+                    <input type="text" placeholder="Nome*" value={nome} onChange={(e) => {
+                        setNome(e.target.value)
+                        setLetra(nome.substr(0,1))
+                    }}/>
                     <InputMask 
                         mask="(99) 99999-9999"
                         placeholder="Telefone*" 

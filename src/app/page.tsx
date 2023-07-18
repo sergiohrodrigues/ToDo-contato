@@ -3,15 +3,14 @@ import Modal from "@/components/ModalAdicionarEAtualizar"
 import { useEffect, useState } from "react"
 import { styled } from "styled-components"
 import { contato } from "@/states/atom"
-import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useRecoilValue } from 'recoil'
 import ModalExcluir from "@/components/ModalExcluir"
 import { IContato } from "@/interface/IContato"
-import { PrimeiraLetraDoNome } from "@/utilidades/PrimeiraLetraDoNome"
 import Contato from "@/components/Contato"
-import { Icon } from "next/dist/lib/metadata/types/metadata-types"
+import { mascaraTelefone } from "@/utilidades/mascaraTelefone"
 
 const MainContainer = styled.main<{display: string}>`
-  padding: 3rem 0 0 3rem;
+  padding: 3rem;
   h2{
     font-size: 2.4rem;
     font-weight: bold;
@@ -69,29 +68,55 @@ const ListaDeContatos = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  button{
+    width: 30%;
+    margin: 0 auto;
+    background-color: #007DFE;
+    border: none;
+    border-radius: 1rem;
+    padding: 1rem;
+    color: #fff;
+    font-weight: 700;
+  }
+  button:hover{
+    cursor: pointer;
+  }
 `
 
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false)
   const [modalDeleteOpen, setModalDeleteOpen] = useState(false)
   const [itemSelecionado, setItemSelecionado] = useState<IContato | undefined>()
-  const [pesquisa, setPesquisa] = useState('')
+  const [opcaoDePesquisa, setOpocaoDePesquisa] = useState('')
+  // const [pesquisa, setPesquisa] = useState('')
 
   const listaDeContato = useRecoilValue<IContato[]>(contato)
 
   const listaDeContatos = JSON.parse(JSON.stringify(listaDeContato))
   const [contatosOrdenados, setContatosOrdenados] = useState<IContato[]>([])
+  const [contatosOrdenadosCompleto, setContatosOrdenadosCompleto] = useState<IContato[]>([])
 
   useEffect(() => {
     ordenarPorNome()
-  }, [])
+  }, [listaDeContato])
 
   const ordenarPorNome = () => {
-    const Allcontatos = listaDeContatos.sort((a: IContato, b: IContato) =>
-      a.nome.localeCompare(b.nome)
+    const allContatos = listaDeContatos.sort((a: IContato, b: IContato) =>
+    a.nome.localeCompare(b.nome)
     );
-    setContatosOrdenados([...Allcontatos]);
+    setContatosOrdenados([...allContatos]);
   };
+
+  const primeiraLista = contatosOrdenados.slice(0,4)
+
+  function adicionarMaisItensALista(){
+    setContatosOrdenadosCompleto(contatosOrdenados)
+  }
+  // const [contatosIniciais, setContatosIniciais] = useState(4)
+  // const constatos = Math.ceil
+
+  console.log(contatosOrdenados.length, contatosOrdenadosCompleto.length)
+
 
   return (
     <>
@@ -103,32 +128,45 @@ export default function Home() {
         <h2>Meus contatos</h2>
         <CriarEPesquisarContainer>
           <div>
-            <select value={pesquisa} onChange={evento => setPesquisa(evento.target.value)}>
+            <select value={opcaoDePesquisa} onChange={evento => setOpocaoDePesquisa(evento.target.value)}>
               <option>Selecione uma opção:</option>
               <option>Nome</option>
               <option value="Telefone">Telefone</option>
             </select>
             <input type="search" placeholder="Pesquisar" onChange={(evento) => {
-              // const itemPesquisado = listaDeContato.filter(itemDaLista => itemDaLista.nome.includes(evento.target.value))
+              const itemPesquisadoPorNome = listaDeContato.filter(itemDaLista => itemDaLista.nome.toUpperCase().includes(evento.target.value.toUpperCase()))
+              const itemPesquisadoPorTelefone = listaDeContato.filter(itemDaLista => itemDaLista.telefone.includes(mascaraTelefone(evento.target.value)))
 
-              // console.log(itemPesquisa)
-              // if(itemPesquisa.length === 0){
-              //   setListaDeContato(listaDeContato)
-              // } else {
-              //   setListaDeContato(itemPesquisa)
-              // }
+              console.log(itemPesquisadoPorNome, mascaraTelefone(evento.target.value))
+              
+              if(opcaoDePesquisa === 'Nome') {
+                setContatosOrdenados(itemPesquisadoPorNome)
+              } if(opcaoDePesquisa === 'Telefone'){
+                setContatosOrdenados(itemPesquisadoPorTelefone)
+              } if(evento.target.value === ''){
+                const allContatos = listaDeContatos.sort((a: IContato, b: IContato) =>
+                a.nome.localeCompare(b.nome)
+                );
+                setContatosOrdenados([...allContatos]);
+              }
             }}/>  
           </div>
           <button onClick={() => setModalOpen(true)}>+ Novo contato</button>
         </CriarEPesquisarContainer>
       <ListaDeContatos>
-        {contatosOrdenados.map((contato, index) => (
-          <Contato key={index} contato={{...contato}} setModalDeleteOpen={setModalDeleteOpen} setItemSelecionado={setItemSelecionado} setModalOpen={setModalOpen}/>
-        ))}
+        {contatosOrdenados.length < 5 
+          ? primeiraLista.map((contatos, index) => (
+            <Contato key={index} contatos={{...contatos}} setModalDeleteOpen={setModalDeleteOpen} setItemSelecionado={setItemSelecionado} setModalOpen={setModalOpen}/>
+          ))
+          : contatosOrdenadosCompleto.map((contatos, index) => (
+            <Contato key={index} contatos={{...contatos}} setModalDeleteOpen={setModalDeleteOpen} setItemSelecionado={setItemSelecionado} setModalOpen={setModalOpen}/>
+          ))
+        }
+        {contatosOrdenados.length > 4 && <button disabled={contatosOrdenadosCompleto.length < contatosOrdenados.length ? false : true} style={{backgroundColor: contatosOrdenadosCompleto.length < contatosOrdenados.length ? '#007DFE' : 'gray', cursor: contatosOrdenadosCompleto.length < contatosOrdenados.length ? 'pointer' : 'default'}} onClick={adicionarMaisItensALista}>Carregar mais</button>}
       </ListaDeContatos>
       </MainContainer>
       <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} itemSelecionado={itemSelecionado} setItemSelecionado={setItemSelecionado}/>
-      <ModalExcluir modalDeleteOpen={modalDeleteOpen} setModalDeleteOpen={setModalDeleteOpen} itemSelecionado={itemSelecionado} setItemSelecionado={setItemSelecionado}/>
-        </>
-    )
-  }
+      <ModalExcluir modalDeleteOpen={modalDeleteOpen} setModalDeleteOpen={setModalDeleteOpen} itemSelecionado={itemSelecionado} setItemSelecionado={setItemSelecionado} adicionarMaisItensALista={adicionarMaisItensALista}/>
+    </>
+  )
+}
