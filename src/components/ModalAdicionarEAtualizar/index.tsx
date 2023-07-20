@@ -134,7 +134,7 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
 
     function atualizarContato(){
         const itemAtualizado = {
-            ...itemSelecionado
+            ...itemSelecionado as IContato
         }
         
         if(nome === '' || telefone === ''){
