@@ -1,4 +1,4 @@
-import { contato } from '@/states/atom'
+import { contato, primeirasLetras } from '@/states/atom'
 import { Dispatch, SetStateAction } from 'react'
 import { styled } from 'styled-components'
 import { useSetRecoilState, useRecoilValue } from 'recoil'
@@ -52,20 +52,27 @@ interface Props {
     setModalDeleteOpen: Dispatch<SetStateAction<boolean>>,
     itemSelecionado: IContato | undefined,
     setItemSelecionado: Dispatch<SetStateAction<IContato | undefined>>,
-    adicionarMaisItensALista: () => void
+    adicionarMaisItensALista: () => void,
+    ordenarPorNome: () => void
 }
 
-const ModalExcluir = ({modalDeleteOpen, setModalDeleteOpen, itemSelecionado, setItemSelecionado, adicionarMaisItensALista}: Props) => {
+const ModalExcluir = ({modalDeleteOpen, setModalDeleteOpen, itemSelecionado, setItemSelecionado, adicionarMaisItensALista, ordenarPorNome}: Props) => {
 
     const setListaContato = useSetRecoilState(contato)
     const listaDeContatos = useRecoilValue(contato)
 
+    const listaPrimeirasLetras = useRecoilValue(primeirasLetras)
+    const setListaPrimeirasLetras = useSetRecoilState(primeirasLetras)
+
     function excluirContato(){
+        const excluirLetra = listaPrimeirasLetras.filter(item => item !== itemSelecionado?.primeiraLetra)
+        setListaPrimeirasLetras(excluirLetra)
         const novaLista = listaDeContatos.filter(itemDaLista => itemDaLista.nome !== itemSelecionado?.nome)
         setListaContato(novaLista)
         setModalDeleteOpen(false)
         setItemSelecionado(undefined)
         adicionarMaisItensALista()
+        ordenarPorNome()
     }
 
     function cancelarExcluir(){

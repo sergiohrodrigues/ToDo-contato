@@ -6,7 +6,7 @@ import { mascaraTelefone } from '@/utilidades/mascaraTelefone'
 import InputMask from "react-input-mask";
 import { IContato } from '@/interface/IContato'
 import { useEffect } from 'react'
-import { PrimeiraLetraDoNome } from '@/utilidades/PrimeiraLetraDoNome'
+import { BackgroundCorPrimeiraLetra } from '@/utilidades/BackgroundCorPrimeiraLetra'
 
 const FundoModal = styled.section<{display: string}>`
     position: fixed;
@@ -102,7 +102,7 @@ const ModalAdicionarEAtualizar = ({modalOpen, setModalOpen, itemSelecionado, set
                 nome: nome,
                 telefone: mascaraTelefone(telefone),
                 primeiraLetra: letraJaAdicionada ? '' : letra,
-                cor: PrimeiraLetraDoNome()
+                cor: BackgroundCorPrimeiraLetra()
             }
             setListaContato(contatoAntigo => [...contatoAntigo, novoContato])
             setModalOpen(false)

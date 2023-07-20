@@ -94,29 +94,28 @@ export default function Home() {
 
   const listaDeContatos = JSON.parse(JSON.stringify(listaDeContato))
   const [contatosOrdenados, setContatosOrdenados] = useState<IContato[]>([])
-  const [contatosOrdenadosCompleto, setContatosOrdenadosCompleto] = useState<IContato[]>([])
 
   useEffect(() => {
     ordenarPorNome()
+    if(contatosOrdenados.length < 5){
+      setQuantidadeDeItensIniciais(4)
+      ordenarPorNome()
+    }
   }, [listaDeContato])
 
   const ordenarPorNome = () => {
     const allContatos = listaDeContatos.sort((a: IContato, b: IContato) =>
     a.nome.localeCompare(b.nome)
     );
-    setContatosOrdenados([...allContatos]);
+      setContatosOrdenados([...allContatos]);
   };
 
-  const primeiraLista = contatosOrdenados.slice(0,4)
+  const [ quantidadeDeItensIniciais, setQuantidadeDeItensIniciais] = useState(4)
+  const startItens = contatosOrdenados.slice(0, quantidadeDeItensIniciais)
 
   function adicionarMaisItensALista(){
-    setContatosOrdenadosCompleto(contatosOrdenados)
+    setQuantidadeDeItensIniciais(contatosOrdenados.length)
   }
-  // const [contatosIniciais, setContatosIniciais] = useState(4)
-  // const constatos = Math.ceil
-
-  console.log(contatosOrdenados.length, contatosOrdenadosCompleto.length)
-
 
   return (
     <>
@@ -136,8 +135,6 @@ export default function Home() {
             <input type="search" placeholder="Pesquisar" onChange={(evento) => {
               const itemPesquisadoPorNome = listaDeContato.filter(itemDaLista => itemDaLista.nome.toUpperCase().includes(evento.target.value.toUpperCase()))
               const itemPesquisadoPorTelefone = listaDeContato.filter(itemDaLista => itemDaLista.telefone.includes(mascaraTelefone(evento.target.value)))
-
-              console.log(itemPesquisadoPorNome, mascaraTelefone(evento.target.value))
               
               if(opcaoDePesquisa === 'Nome') {
                 setContatosOrdenados(itemPesquisadoPorNome)
@@ -154,19 +151,21 @@ export default function Home() {
           <button onClick={() => setModalOpen(true)}>+ Novo contato</button>
         </CriarEPesquisarContainer>
       <ListaDeContatos>
-        {contatosOrdenados.length < 5 
-          ? primeiraLista.map((contatos, index) => (
+         {startItens.map((contatos, index) => (
             <Contato key={index} contatos={{...contatos}} setModalDeleteOpen={setModalDeleteOpen} setItemSelecionado={setItemSelecionado} setModalOpen={setModalOpen}/>
-          ))
-          : contatosOrdenadosCompleto.map((contatos, index) => (
-            <Contato key={index} contatos={{...contatos}} setModalDeleteOpen={setModalDeleteOpen} setItemSelecionado={setItemSelecionado} setModalOpen={setModalOpen}/>
-          ))
-        }
-        {contatosOrdenados.length > 4 && <button disabled={contatosOrdenadosCompleto.length < contatosOrdenados.length ? false : true} style={{backgroundColor: contatosOrdenadosCompleto.length < contatosOrdenados.length ? '#007DFE' : 'gray', cursor: contatosOrdenadosCompleto.length < contatosOrdenados.length ? 'pointer' : 'default'}} onClick={adicionarMaisItensALista}>Carregar mais</button>}
+          ))}
+        {contatosOrdenados.length > 4 && 
+        <button 
+          disabled={contatosOrdenados.length > startItens.length ? false : true} 
+          style={{backgroundColor: contatosOrdenados.length > startItens.length ? '#007DFE' : 'gray', cursor: contatosOrdenados.length > startItens.length ? 'pointer' : 'default'}} 
+          onClick={adicionarMaisItensALista}
+        >
+          Carregar mais
+        </button>}
       </ListaDeContatos>
       </MainContainer>
       <Modal modalOpen={modalOpen} setModalOpen={setModalOpen} itemSelecionado={itemSelecionado} setItemSelecionado={setItemSelecionado}/>
-      <ModalExcluir modalDeleteOpen={modalDeleteOpen} setModalDeleteOpen={setModalDeleteOpen} itemSelecionado={itemSelecionado} setItemSelecionado={setItemSelecionado} adicionarMaisItensALista={adicionarMaisItensALista}/>
+      <ModalExcluir modalDeleteOpen={modalDeleteOpen} setModalDeleteOpen={setModalDeleteOpen} itemSelecionado={itemSelecionado} setItemSelecionado={setItemSelecionado} adicionarMaisItensALista={adicionarMaisItensALista} ordenarPorNome={ordenarPorNome}/>
     </>
   )
 }
