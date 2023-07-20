@@ -8,11 +8,15 @@ import ModalExcluir from "@/components/ModalExcluir"
 import { IContato } from "@/interface/IContato"
 import Contato from "@/components/Contato"
 import { mascaraTelefone } from "@/utilidades/mascaraTelefone"
+import { GrFormAdd } from 'react-icons/gr'
 
 const MainContainer = styled.main<{display: string}>`
-  padding: 3rem;
+  padding: 2rem 0;
+  width: 90%;
+  margin: 0 auto;
   h2{
-    font-size: 2.4rem;
+    font-size: 1.5rem;
+    text-align: center;
     font-weight: bold;
     color: #333333;
   }
@@ -22,6 +26,14 @@ const MainContainer = styled.main<{display: string}>`
     position: fixed;
     inset: 0;
     opacity: 0.8;
+  }
+
+  @media screen and (min-width: 768px){
+    padding: 3rem;
+    h2{
+      font-size: 2.4rem;
+      text-align: left;
+    }
   }
 `
 
@@ -40,9 +52,9 @@ const HeaderContainer = styled.header`
 
 const CriarEPesquisarContainer = styled.div`
   margin-top: 2rem;
-  width: 50%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column-reverse;
+  gap: 1rem;
   select{
     padding: 0.5rem;
     outline: none;
@@ -52,19 +64,36 @@ const CriarEPesquisarContainer = styled.div`
     outline: none;
   }
   button{
+    width: 181px;
     padding: 0.5rem 2rem;
     background-color: #007DFE;
+    border-radius: 0.4rem;
     border: none;
     color: #fff;
+    svg{
+      display: none;
+    }
   }
-  button:hover{
-    cursor: pointer;
+
+  @media screen and (min-width: 768px){
+    flex-direction: row;
+    button{
+      display: flex;
+      align-items: center;
+      svg{
+        display: block;
+        font-size: 1.5rem;
+        color: #fff;
+      }
+    }
+    button:hover{
+      cursor: pointer;
+    }
   }
 `
 
 const ListaDeContatos = styled.ul`
   margin-top: 2rem;
-  width: 50%;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -78,8 +107,12 @@ const ListaDeContatos = styled.ul`
     color: #fff;
     font-weight: 700;
   }
-  button:hover{
-    cursor: pointer;
+
+  @media screen and (min-width: 768px){
+    width: 50%;
+    button:hover{
+      cursor: pointer;
+    }
   }
 `
 
@@ -148,7 +181,7 @@ export default function Home() {
               }
             }}/>  
           </div>
-          <button onClick={() => setModalOpen(true)}>+ Novo contato</button>
+          <button onClick={() => setModalOpen(true)}><GrFormAdd />Novo contato</button>
         </CriarEPesquisarContainer>
       <ListaDeContatos>
          {startItens.map((contatos, index) => (

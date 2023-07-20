@@ -15,7 +15,7 @@ const ContatoContainer = styled.li<{colorletra: string}>`
     .infos{
       display: flex;
       align-items: center;
-      gap: 2rem;
+      gap: 0.5rem;
       .letra{
         background-color: ${props => props.colorletra};
         padding: 0.4rem;
@@ -27,18 +27,58 @@ const ContatoContainer = styled.li<{colorletra: string}>`
         flex-direction: column;
         gap: 0.2rem;
         h2{
-          font-size: 1.5rem;
+          font-size: 1rem;
+        }
+        span{
+          font-size: 0.9rem;
         }
       }
     }
     .botoes{
       display: flex;
-      gap: 1rem;
+      gap: 0.5rem;
       svg{
         font-size: 1.5rem;
       }
-      svg:hover{
-        cursor: pointer;
+    }
+
+    @media screen and (min-width: 768px){
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid lightgray;
+      .infos{
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        .letra{
+          background-color: ${props => props.colorletra};
+          padding: 0.4rem;
+          border-radius: 0.5rem;
+          color: #fff;
+        }
+        div{
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+          h2{
+            font-size: 1.7rem;
+          }
+          span{
+            font-size: 1.1rem;
+          }
+        }
+      }
+      .botoes{
+        display: flex;
+        gap: 1rem;
+        svg{
+          font-size: 1.5rem;
+        }
+        svg:hover{
+          cursor: pointer;
+        }
       }
     }
 `

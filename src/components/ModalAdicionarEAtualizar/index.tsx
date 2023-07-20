@@ -14,11 +14,18 @@ const FundoModal = styled.section<{display: string}>`
     display: ${props => props.display};
     justify-content: center;
     align-items: center;
+    padding: 1rem;
+
+    @media screen and (min-width: 768px){
+        padding: 0;
+    }
 `
 
 const ModalContainer = styled.div`
+    width: 90%;
+    max-width: 400px;
     background-color: #fff;
-    padding: 2rem;
+    padding: 1rem;
     h2{
         font-weight: bold;
     }
@@ -35,14 +42,11 @@ const ModalContainer = styled.div`
     }
     .botoes{
         display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
+        justify-content: center;
+        gap: 0.5rem;
         button{
             border: none;
             padding: 0.5rem 2rem;
-        }
-        button:hover{
-            cursor: pointer;
         }
         button:nth-child(1){
             font-weight: bold;
@@ -51,6 +55,21 @@ const ModalContainer = styled.div`
         button:nth-child(2){
             background-color: #007DFE;
             color: #fff;
+        }
+    }
+
+    @media screen and (min-width: 768px){
+        width: 738px;
+        padding: 2rem;
+        div{
+            justify-content: space-between;
+        }
+        .botoes{
+            justify-content: flex-end;
+            gap: 1rem;
+            button:hover{
+                cursor: pointer;
+            }
         }
     }
 `
